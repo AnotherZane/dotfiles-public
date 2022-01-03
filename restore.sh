@@ -79,37 +79,40 @@ done
 
 shift $(( OPTIND - 1 ))
 
-if [[ $1 == "" ]]; then
-  echo "No path provided. Use ./link.sh -h to see valid syntax."
-  exit 1
-fi
+for arg in "$@"
+do
+  if [[ $arg == "" ]]; then
+    echo "No path provided. Use ./link.sh -h to see valid syntax."
+    exit 1
+  fi
 
-LINK_FOLDER_PATH=`readlink -f $LINK_FOLDER`
-LINK_PATH=`readlink -f $1`
+  LINK_FOLDER_PATH=`readlink -f $LINK_FOLDER`
+  LINK_PATH=`readlink -f $arg`
 
-if [[ $LINK_PATH != $LINK_FOLDER_PATH* ]]; then
-  echo "$LINK_PATH: Provided path is not in the $LINK_FOLDER directory."
-  exit 1
-elif [[ $LINK_PATH == $LINK_FOLDER_PATH ]]; then
-  echo "Provided path is the $LINK_FOLDER directory. Exiting to prevent files be unnecessarily linked."
-  exit 1
-fi
+  if [[ $LINK_PATH != $LINK_FOLDER_PATH* ]]; then
+    echo "$LINK_PATH: Provided path is not in the $LINK_FOLDER directory."
+    exit 1
+  elif [[ $LINK_PATH == $LINK_FOLDER_PATH ]]; then
+    echo "Provided path is the $LINK_FOLDER directory. Exiting to prevent files be unnecessarily linked."
+    exit 1
+  fi
 
-if [ -f $LINK_PATH ]; then
-  is_file=true
-elif [ -d $LINK_PATH ]; then
-  is_file=false
-else
-  echo "$LINK_PATH: No such file or directory."
-  exit 1
-fi
+  if [ -f $LINK_PATH ]; then
+    is_file=true
+  elif [ -d $LINK_PATH ]; then
+    is_file=false
+  else
+    echo "$LINK_PATH: No such file or directory."
+    exit 1
+  fi
 
-REL_PATH=${LINK_PATH#$LINK_FOLDER_PATH/}
+  REL_PATH=${LINK_PATH#$LINK_FOLDER_PATH/}
 
-if [ $is_file = true ]; then
-  restore_file $LINK_PATH $REL_PATH false
-else
-  restore_dir $LINK_PATH $REL_PATH $RECURSIVE
-fi
+  if [ $is_file = true ]; then
+    restore_file $LINK_PATH $REL_PATH false
+  else
+    restore_dir $LINK_PATH $REL_PATH $RECURSIVE
+  fi
+done
 
 echo "Done"

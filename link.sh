@@ -83,36 +83,39 @@ done
 
 shift $(( OPTIND - 1 ))
 
-if [[ $1 == "" ]]; then
-  echo "No path provided. Use ./link.sh -h to see valid syntax."
-  exit 1
-fi
+for arg in "$@"
+do
+  if [[ $arg == "" ]]; then
+    echo "No path provided. Use ./link.sh -h to see valid syntax."
+    exit 1
+  fi
 
-LINK_PATH=`readlink -f $1`
+  LINK_PATH=`readlink -f $arg`
 
-if [[ $LINK_PATH != $HOME* ]]; then
-  echo "$LINK_PATH: Provided path is not in the home directory."
-  exit 1
-elif [[ $LINK_PATH == $HOME ]]; then
-  echo "Provided path is the home directory. Exiting to prevent files be unnecessarily linked."
-  exit 1
-fi
+  if [[ $LINK_PATH != $HOME* ]]; then
+    echo "$LINK_PATH: Provided path is not in the home directory."
+    exit 1
+  elif [[ $LINK_PATH == $HOME ]]; then
+    echo "Provided path is the home directory. Exiting to prevent files be unnecessarily linked."
+    exit 1
+  fi
 
-if [ -f $LINK_PATH ]; then
-  is_file=true
-elif [ -d $LINK_PATH ]; then
-  is_file=false
-else
-  echo "$LINK_PATH: No such file or directory."
-  exit 1
-fi
+  if [ -f $LINK_PATH ]; then
+    is_file=true
+  elif [ -d $LINK_PATH ]; then
+    is_file=false
+  else
+    echo "$LINK_PATH: No such file or directory."
+    exit 1
+  fi
 
-REL_PATH=${LINK_PATH#$HOME/}
+  REL_PATH=${LINK_PATH#$HOME/}
 
-if [ $is_file = true ]; then
-  link_file $LINK_PATH $REL_PATH false
-else
-  link_dir $LINK_PATH $REL_PATH $RECURSIVE
-fi
+  if [ $is_file = true ]; then
+    link_file $LINK_PATH $REL_PATH false
+  else
+    link_dir $LINK_PATH $REL_PATH $RECURSIVE
+  fi
+done
 
 echo "Done"
