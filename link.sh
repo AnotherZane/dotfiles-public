@@ -90,7 +90,6 @@ fi
 
 LINK_PATH=`readlink -f $1`
 
-
 if [[ $LINK_PATH != $HOME* ]]; then
   echo "$LINK_PATH: Provided path is not in the home directory."
   exit 1
