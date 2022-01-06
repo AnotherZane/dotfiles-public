@@ -68,6 +68,10 @@ restore_dir() {
 
 # MAIN SCRIPT
 
+LINK_FOLDER=`dirname $0`
+LINK_FOLDER=`readlink -f $LINK_FOLDER`
+LINK_FOLDER=$LINK_FOLDER/files
+
 while getopts "hr" opt; do
   case $opt in
     h) help; exit ;;
