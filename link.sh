@@ -76,6 +76,10 @@ LINK_FOLDER=`dirname $0`
 LINK_FOLDER=`readlink -f $LINK_FOLDER`
 LINK_FOLDER=$LINK_FOLDER/files
 
+FOLDERS=`dirname $0`
+FOLDERS=`readlink -f $FOLDERS`
+FOLDERS=$FOLDERS/folders.txt
+
 while getopts "hr" opt; do
   case $opt in
     h) help; exit ;;
